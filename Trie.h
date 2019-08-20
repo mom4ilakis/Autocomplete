@@ -5,7 +5,7 @@
 #include <QTextStream>
 #include <QFile>
 #include <QSet>
-
+#include <forward_list>
 class PrefixTree
 {
 private:
@@ -73,7 +73,7 @@ private:
     //node for traversal of the prefix tree
     node* traversal_node;
     //storage of all nodes, in a list so pointers & iterators won't break when adding nodes
-    std::list<node> all_nodes;
+    std::forward_list<node> all_nodes;
 
     size_t k;
 

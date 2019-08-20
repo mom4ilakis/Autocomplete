@@ -5,7 +5,7 @@
 PrefixTree::PrefixTree()
 {
     //creates a root node
-    all_nodes.push_back(node('#'));
+    all_nodes.push_front(node('#'));
     //setting root to point to the front of the list
     root = &all_nodes.front();
     //setting traversal node to be root
@@ -118,9 +118,9 @@ PrefixTree::node* PrefixTree::createNode(QChar symbol, node * parrent)
     if(parrent->children.find(symbol)==parrent->children.end())
     {
         //add the node to the list of nodes
-        all_nodes.push_back(node(symbol));
+        all_nodes.push_front(node(symbol));
         //gets a pointer to that node
-        node* ptr = &all_nodes.back();
+        node* ptr = &all_nodes.front();
         //adds the pointer to the parrent node
         parrent->children[symbol] = ptr;
 
