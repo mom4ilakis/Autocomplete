@@ -4,7 +4,7 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),lastSize(0)
 {
     ui->setupUi(this);
 }
@@ -16,10 +16,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_InputBox_textChanged(const QString &arg1)
 {
-    //holds the size of the last input
-    static size_t lastSize=0;
-    //holds the word inputed
-    static QString iWord;
+
     unsigned user_sug_size=0;
 
     //if there is no input, reset the traversal node
@@ -76,15 +73,11 @@ void MainWindow::on_InputBox_textChanged(const QString &arg1)
 
                     res = tree.SuggestWords(arg1.back());
 
-
-                    if(res.size()==0 && user_res.size()==0)
-                    {
-                        ;//if there are no suggested words, do nothing
-                    }
-                    else
-                    {
-                        //will hold words from res
+                 }
+                         //will hold words from res
                         QString word;
+                        if(!user_res.empty())
+                        {
 
                         user_sug_size = user_res.size();
                         //iterate user_res and add words to the input
@@ -98,13 +91,15 @@ void MainWindow::on_InputBox_textChanged(const QString &arg1)
                             output+=arg1+word+'\n';
                         }
 
-
+                        }
+                        if(!res.empty())
+                        {
 
                         //adding words from res to output
                         QSet<QString>::iterator it_r = res.begin();
                         for(size_t i = user_sug_size;it_r!=res.end()&&i<=ui->NumberOfSuggestions->value();++i,++it_r)
                         {
-                            word = *it;
+                            word = *it_r;
 
                             if(user_res.find(word)==user_res.end())
                             {
@@ -114,13 +109,14 @@ void MainWindow::on_InputBox_textChanged(const QString &arg1)
                                 output += arg1+word+'\n';
                             }
                         }
+                        }
                         //outputing the text
                         ui->OutputBox->setPlainText(output);
                     }
                 }
             }
-        }
-    }
+
+
     //the size of the input
     lastSize = arg1.size();
 }

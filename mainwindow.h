@@ -30,6 +30,8 @@ private:
     Ui::MainWindow *ui;
     PrefixTree tree;
     PrefixTree user_input_tree;
+    QString iWord;
+    size_t lastSize;
 };
 
 #endif // MAINWINDOW_H
