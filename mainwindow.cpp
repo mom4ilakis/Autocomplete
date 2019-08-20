@@ -37,12 +37,12 @@ void MainWindow::on_InputBox_textChanged(const QString &arg1)
             {
 
 
-            //inserts the word into the tree
-            user_input_tree.insertWord(iWord);
-            //resets traversal node for next word
-            tree.ResetTraversal();
+                //inserts the word into the tree
+                user_input_tree.insertWord(iWord);
+                //resets traversal node for next word
+                tree.ResetTraversal();
 
-            user_input_tree.ResetTraversal();
+                user_input_tree.ResetTraversal();
             }
 
             //cleans
@@ -57,16 +57,16 @@ void MainWindow::on_InputBox_textChanged(const QString &arg1)
                 //add the letter to the word
                 iWord.push_back(arg1.back());
                 //a vector of all suggested words
-                std::vector<QString> res;
+                QSet<QString> res;
                 //a vector of all user input suggested input;
-                std::vector<QString> user_res;
+                QSet<QString> user_res;
                 //this is the text that is going to be displayed
                 QString output;
 
                 //if there are user inputed words
                 if(!user_input_tree.isEmpty())
                 {
-                   user_res = user_input_tree.SuggestWords(arg1.back());
+                    user_res = user_input_tree.SuggestWords(arg1.back());
                 }
 
 
@@ -74,46 +74,51 @@ void MainWindow::on_InputBox_textChanged(const QString &arg1)
                 if(!tree.isEmpty())
                 {
 
-                   res = tree.SuggestWords(arg1.back());
+                    res = tree.SuggestWords(arg1.back());
 
 
-                if(res.size()==0 && user_res.size()==0)
-                {
-                    ;//if there are no suggested words, do nothing
-                }
-                else
-                {
-                    //will hold words from res
-                    QString word;
-
-                    user_sug_size = user_res.size();
-                    //iterate user_res and add words to the input
-
-                    for(size_t i = 0; i< ui->NumberOfSuggestions->value() && i<user_res.size();++i)
+                    if(res.size()==0 && user_res.size()==0)
                     {
-                        word = user_res[i];
-
-                        word.remove(0,1);
-                        //separate words with  a new line
-                        output+=arg1+word+'\n';
+                        ;//if there are no suggested words, do nothing
                     }
-
-
-
-                    //adding words from res to output
-                    for(size_t i = user_sug_size;i<res.size()&&i<=ui->NumberOfSuggestions->value();++i)
+                    else
                     {
-                       word = res[i];
-                       //removes the first letter, so there is no doubling of letters
-                       word.remove(0,1);
-                       //adds the word to the output
-                       output += arg1+word+'\n';
+                        //will hold words from res
+                        QString word;
+
+                        user_sug_size = user_res.size();
+                        //iterate user_res and add words to the input
+                        QSet<QString>::iterator it = user_res.begin();
+                        for(size_t i = 0; i< ui->NumberOfSuggestions->value() && it != user_res.end();++i,++it)
+                        {
+                            word = *it;
+
+                            word.remove(0,1);
+                            //separate words with  a new line
+                            output+=arg1+word+'\n';
+                        }
+
+
+
+                        //adding words from res to output
+                        QSet<QString>::iterator it_r = res.begin();
+                        for(size_t i = user_sug_size;it_r!=res.end()&&i<=ui->NumberOfSuggestions->value();++i,++it_r)
+                        {
+                            word = *it;
+
+                            if(user_res.find(word)==user_res.end())
+                            {
+                                //removes the first letter, so there is no doubling of letters
+                                word.remove(0,1);
+                                //adds the word to the output
+                                output += arg1+word+'\n';
+                            }
+                        }
+                        //outputing the text
+                        ui->OutputBox->setPlainText(output);
                     }
-                    //outputing the text
-                    ui->OutputBox->setPlainText(output);
                 }
-             }
-           }
+            }
         }
     }
     //the size of the input
